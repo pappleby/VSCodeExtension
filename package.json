@@ -146,6 +146,12 @@
                 "category": "Yarn Spinner",
                 "title": "Create New Yarn Project...",
                 "enablement": "yarnspinner.languageServerLaunched"
+            },
+            {
+                "command": "yarnspinner.loadExternalActionSource",
+                "category": "Yarn Spinner",
+                "title": "Import External Action Source",
+                "enablement": "yarnspinner.languageServerLaunched"
             }
         ],
         "configurationDefaults": {

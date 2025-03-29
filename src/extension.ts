@@ -555,6 +555,16 @@ async function launchLanguageServer(context: vscode.ExtensionContext, configs: v
         vscode.commands.executeCommand('revealInExplorer', destinationUri);
     }))
 
+    context.subscriptions.push(vscode.commands.registerCommand("yarnspinner.loadExternalActionSource", () => {
+        loadExternalActionSource(client).then((isSuccess) => {
+            if (isSuccess) {
+                vscode.window.showInformationMessage("Successfully loaded external action source.");
+            } else {
+                vscode.window.showErrorMessage("Failed to load external action source.");
+            }
+        });
+    }));
+
     // Enable commands that depend upon the language server being online and the above commands being registered
     vscode.commands.executeCommand('setContext', 'yarnspinner.languageServerLaunched', true);
 
@@ -617,6 +627,36 @@ async function listProjects(client: languageClient.LanguageClient): Promise<Arra
     };
 
     let result = await client.sendRequest(languageClient.ExecuteCommandRequest.type, params);
+
+    return result;
+}
+
+async function loadExternalActionSource(client: languageClient.LanguageClient): Promise<boolean> {
+    const params: languageClient.ExecuteCommandParams = {
+        command: "yarnspinner.loadExternalActionSource",
+        arguments: ["test", `
+            {
+    "Commands": [
+        {
+            "Language": "csharp",
+            "YarnName": "do_cool_thing",
+            "DefinitionName": "DoCoolThing",
+            "Documentation": "Does a cool thing.",
+            "Parameters": [
+                {
+                    "Name": "thing",
+                    "Type": "String",
+                    "Documentation": "The thing to do.",
+                    "DefaultValue": "nifty"
+                }
+            ]
+        }
+    ]
+}
+            `],
+    };
+
+    let result: boolean = await client.sendRequest(languageClient.ExecuteCommandRequest.type, params);
 
     return result;
 }
